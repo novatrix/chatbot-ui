@@ -6,7 +6,8 @@ import {
   IconBolt,
   IconCirclePlus,
   IconPlayerStopFilled,
-  IconSend
+  IconSend,
+  IconMicrophoneOff
 } from "@tabler/icons-react"
 import Image from "next/image"
 import { FC, useContext, useEffect, useRef, useState } from "react"
@@ -20,11 +21,15 @@ import { useChatHandler } from "./chat-hooks/use-chat-handler"
 import { useChatHistoryHandler } from "./chat-hooks/use-chat-history"
 import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
 import { useSelectFileHandler } from "./chat-hooks/use-select-file-handler"
+import { uploadAudioToSupabase } from "@/db/storage/voice-input" // Import the function
 
 interface ChatInputProps {}
 
 export const ChatInput: FC<ChatInputProps> = ({}) => {
   const { t } = useTranslation()
+
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null)
+  const [isRecording, setIsRecording] = useState<boolean>(false)
 
   useHotkey("l", () => {
     handleFocusChatInput()
@@ -74,6 +79,54 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
   } = useChatHistoryHandler()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // From IconMicrophone. Record user voice
+  const handleStartRecording = () => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then(stream => {
+        const mediaRecorder = new MediaRecorder(stream)
+        mediaRecorder.start()
+
+        // Save the media recorder to a state variable so that you can stop it later
+        setMediaRecorder(mediaRecorder)
+        setIsRecording(true)
+
+        mediaRecorder.onstop = () => {
+          setIsRecording(false)
+        }
+      })
+      .catch(error => {
+        console.error("Error starting recording:", error)
+      })
+  }
+
+  const handleStopRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.stop()
+      setIsRecording(false)
+
+      mediaRecorder.ondataavailable = async event => {
+        const audioBlob = event.data
+        const fileName = `recording-${Date.now()}.wav`
+
+        try {
+          const data = await uploadAudioToSupabase(audioBlob, fileName)
+          console.log("Audio uploaded successfully:", data)
+        } catch (error) {
+          console.error("Error uploading audio:", error)
+        }
+      }
+    }
+  }
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      handleStopRecording()
+    } else {
+      handleStartRecording()
+    }
+  }
 
   useEffect(() => {
     setTimeout(() => {
@@ -216,25 +269,31 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           <ChatCommandInput />
         </div>
 
-        <>
+        <div className="absolute bottom-[12px] left-3 flex items-center space-x-2">
           <IconCirclePlus
-            className="absolute bottom-[12px] left-3 cursor-pointer p-1 hover:opacity-50"
+            className="cursor-pointer p-1 hover:opacity-50"
             size={32}
             onClick={() => fileInputRef.current?.click()}
           />
 
-          {/* Hidden input to select files from device */}
-          <Input
-            ref={fileInputRef}
-            className="hidden"
-            type="file"
-            onChange={e => {
-              if (!e.target.files) return
-              handleSelectDeviceFile(e.target.files[0])
-            }}
-            accept={filesToAccept}
+          <IconMicrophoneOff
+            className="cursor-pointer p-1 hover:opacity-50"
+            size={32}
+            onClick={toggleRecording}
           />
-        </>
+        </div>
+
+        {/* Hidden input to select files from device */}
+        <Input
+          ref={fileInputRef}
+          className="hidden"
+          type="file"
+          onChange={e => {
+            if (!e.target.files) return
+            handleSelectDeviceFile(e.target.files[0])
+          }}
+          accept={filesToAccept}
+        />
 
         <TextareaAutosize
           textareaRef={chatInputRef}
