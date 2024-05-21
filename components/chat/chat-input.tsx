@@ -37,10 +37,9 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
   const [isTyping, setIsTyping] = useState<boolean>(false)
 
-  const [userInput, setUserInput] = useState<string>("")
-
   const {
     isAssistantPickerOpen,
+    userInput,
     focusAssistant,
     setFocusAssistant,
     chatMessages,
@@ -118,7 +117,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           console.log("Transcript:", result)
           if (result) {
             transcript = result
-            setUserInput(userInput + " " + transcript) // Update the userInput state with the transcript
+            handleInputChange(userInput + " " + transcript) // Update the userInput state with the transcript
           }
         } catch (error) {
           console.error("Error uploading audio:", error)
