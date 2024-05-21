@@ -30,7 +30,6 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null)
   const [isRecording, setIsRecording] = useState<boolean>(false)
-  const [transcriptReceived, setTranscriptReceived] = useState<boolean>(true) // Initially true since no recording/transcript is pending
 
   useHotkey("l", () => {
     handleFocusChatInput()
@@ -106,7 +105,6 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     if (mediaRecorder) {
       mediaRecorder.stop()
       setIsRecording(false)
-      setTranscriptReceived(false) // Assume transcript is not received when stopping
 
       let transcript = ""
 
@@ -121,17 +119,15 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           if (result) {
             transcript = result
             setUserInput(userInput + " " + transcript) // Update the userInput state with the transcript
-            setTranscriptReceived(true) // Set true when transcript is processed
           }
         } catch (error) {
           console.error("Error uploading audio:", error)
-          setTranscriptReceived(true) // Ensure UI is unlocked even if there's an error
         }
       }
 
       return transcript
     }
-    return "" // Ensure all code paths return a value.
+    return ""
   }
 
   const toggleRecording = async () => {
@@ -322,9 +318,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           textareaRef={chatInputRef}
           className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-4 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           placeholder={t(`Ask anything. Type @  /  #  !`)}
-          onValueChange={value => {
-            handleInputChange(value)
-          }}
+          onValueChange={handleInputChange}
           value={userInput}
           minRows={1}
           maxRows={18}
