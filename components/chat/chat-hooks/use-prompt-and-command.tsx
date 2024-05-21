@@ -40,17 +40,21 @@ export const usePromptAndCommand = () => {
     const toolMatch = value.match(toolTextRegex)
 
     if (atMatch) {
-      //setIsAssistantPickerOpen(true)
-      //setAtCommand(atMatch[1])
+      setIsAssistantPickerOpen(true)
+      setAtCommand(atMatch[1])
+      console.log("atMatch", atMatch)
     } else if (slashMatch) {
-      //setIsPromptPickerOpen(true)
-      //setSlashCommand(slashMatch[1])
+      setIsPromptPickerOpen(true)
+      setSlashCommand(slashMatch[1])
+      console.log("slashMatch", slashMatch)
     } else if (hashtagMatch) {
-      //setIsFilePickerOpen(true)
-      //setHashtagCommand(hashtagMatch[1])
+      setIsFilePickerOpen(true)
+      setHashtagCommand(hashtagMatch[1])
+      console.log("hashtagMatch", hashtagMatch)
     } else if (toolMatch) {
-      //setIsToolPickerOpen(true)
-      //setToolCommand(toolMatch[1])
+      setIsToolPickerOpen(true)
+      setToolCommand(toolMatch[1])
+      console.log("toolMatch", toolMatch)
     } else {
       setIsPromptPickerOpen(false)
       setIsFilePickerOpen(false)
@@ -63,6 +67,7 @@ export const usePromptAndCommand = () => {
     }
 
     setUserInput(value)
+    console.log("userInput", userInput)
   }
 
   const handleSelectPrompt = (prompt: Tables<"prompts">) => {
