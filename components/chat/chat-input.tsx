@@ -7,7 +7,8 @@ import {
   IconCirclePlus,
   IconPlayerStopFilled,
   IconSend,
-  IconMicrophoneOff
+  IconMicrophone,
+  IconPlayerRecord
 } from "@tabler/icons-react"
 import Image from "next/image"
 import { FC, useContext, useEffect, useRef, useState } from "react"
@@ -80,7 +81,6 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // From IconMicrophone. Record user voice
   const handleStartRecording = () => {
     navigator.mediaDevices
       .getUserMedia({ audio: true })
@@ -101,28 +101,35 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
       })
   }
 
-  const handleStopRecording = () => {
+  const handleStopRecording = async (): Promise<string> => {
     if (mediaRecorder) {
       mediaRecorder.stop()
       setIsRecording(false)
+
+      let transcript = ""
 
       mediaRecorder.ondataavailable = async event => {
         const audioBlob = event.data
         const fileName = `recording-${Date.now()}.wav`
 
         try {
-          const data = await uploadAudioToSupabase(audioBlob, fileName)
-          console.log("Audio uploaded successfully:", data)
+          transcript = (await uploadAudioToSupabase(audioBlob, fileName)) || ""
+          console.log("Transcript:", transcript)
         } catch (error) {
           console.error("Error uploading audio:", error)
         }
       }
+
+      return transcript
     }
+    return "" // Ensure all code paths return a value.
   }
 
-  const toggleRecording = () => {
+  const toggleRecording = async () => {
     if (isRecording) {
-      handleStopRecording()
+      let transcript = ""
+      transcript = await handleStopRecording()
+      console.log("Transcript:", transcript)
     } else {
       handleStartRecording()
     }
@@ -276,11 +283,19 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
             onClick={() => fileInputRef.current?.click()}
           />
 
-          <IconMicrophoneOff
-            className="cursor-pointer p-1 hover:opacity-50"
-            size={32}
-            onClick={toggleRecording}
-          />
+          {isRecording ? (
+            <IconPlayerRecord
+              className="cursor-pointer p-1 text-red-500 hover:opacity-50" // Styled red for recording
+              size={32}
+              onClick={toggleRecording}
+            />
+          ) : (
+            <IconMicrophone
+              className="cursor-pointer p-1 hover:opacity-50"
+              size={32}
+              onClick={toggleRecording}
+            />
+          )}
         </div>
 
         {/* Hidden input to select files from device */}

@@ -53,9 +53,7 @@ export const uploadAudioToSupabase = async (
       audio: publicUrl
     })
 
-    console.log("Transcription:", transcript)
-
-    return data
+    return transcript.text
   } catch (error) {
     console.error("Error uploading audio:", error)
     throw error
