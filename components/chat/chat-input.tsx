@@ -30,12 +30,11 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null)
   const [isRecording, setIsRecording] = useState<boolean>(false)
+  const [isTyping, setIsTyping] = useState<boolean>(false)
 
   useHotkey("l", () => {
     handleFocusChatInput()
   })
-
-  const [isTyping, setIsTyping] = useState<boolean>(false)
 
   const {
     isAssistantPickerOpen,
@@ -279,22 +278,22 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           <ChatCommandInput />
         </div>
 
-        <div className="absolute bottom-[12px] left-3 flex items-center space-x-1">
+        <div className="absolute bottom-[12px] left-2 flex items-center space-x-1">
           <IconCirclePlus
-            className="cursor-pointer p-1 hover:opacity-50"
+            className="cursor-pointer p-0 hover:opacity-50"
             size={32}
             onClick={() => fileInputRef.current?.click()}
           />
 
           {isRecording ? (
             <IconMicrophone
-              className="cursor-pointer p-1 text-red-500"
+              className="cursor-pointer p-0 text-red-500"
               size={32}
               onClick={toggleRecording}
             />
           ) : (
             <IconMicrophone
-              className="cursor-pointer p-1 hover:opacity-50"
+              className="cursor-pointer p-0 hover:opacity-50"
               size={32}
               onClick={toggleRecording}
             />
