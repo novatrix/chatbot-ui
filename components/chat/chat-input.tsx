@@ -7,8 +7,7 @@ import {
   IconCirclePlus,
   IconPlayerStopFilled,
   IconSend,
-  IconMicrophone,
-  IconPlayerRecord
+  IconMicrophone
 } from "@tabler/icons-react"
 import Image from "next/image"
 import { FC, useContext, useEffect, useRef, useState } from "react"
@@ -38,11 +37,12 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
   const [isTyping, setIsTyping] = useState<boolean>(false)
 
+  const [userInput, setUserInput] = useState<string>("") // Added this line to define userInput and its setter
+
   const {
     isAssistantPickerOpen,
     focusAssistant,
     setFocusAssistant,
-    userInput,
     chatMessages,
     isGenerating,
     selectedPreset,
@@ -108,13 +108,18 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
       let transcript = ""
 
+      // This event might be triggered multiple times, handle accordingly
       mediaRecorder.ondataavailable = async event => {
         const audioBlob = event.data
         const fileName = `recording-${Date.now()}.wav`
 
         try {
-          transcript = (await uploadAudioToSupabase(audioBlob, fileName)) || ""
-          console.log("Transcript:", transcript)
+          const result = await uploadAudioToSupabase(audioBlob, fileName)
+          console.log("Transcript:", result)
+          if (result) {
+            transcript = result
+            setUserInput(transcript) // Update the userInput state with the transcript
+          }
         } catch (error) {
           console.error("Error uploading audio:", error)
         }
@@ -129,7 +134,6 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     if (isRecording) {
       let transcript = ""
       transcript = await handleStopRecording()
-      console.log("Transcript:", transcript)
     } else {
       handleStartRecording()
     }
@@ -284,8 +288,8 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           />
 
           {isRecording ? (
-            <IconPlayerRecord
-              className="cursor-pointer p-1 text-red-500 hover:opacity-50" // Styled red for recording
+            <IconMicrophone
+              className="cursor-pointer p-1 text-red-500"
               size={32}
               onClick={toggleRecording}
             />
@@ -312,12 +316,12 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
         <TextareaAutosize
           textareaRef={chatInputRef}
-          className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-2 focus-visible:outline-none"
           placeholder={t(
             // `Ask anything. Type "@" for assistants, "/" for prompts, "#" for files, and "!" for tools.`
             `Ask anything. Type @  /  #  !`
           )}
-          onValueChange={handleInputChange}
+          onValueChange={isRecording ? () => {} : handleInputChange}
           value={userInput}
           minRows={1}
           maxRows={18}
