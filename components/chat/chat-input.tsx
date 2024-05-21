@@ -21,7 +21,7 @@ import { useChatHandler } from "./chat-hooks/use-chat-handler"
 import { useChatHistoryHandler } from "./chat-hooks/use-chat-history"
 import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
 import { useSelectFileHandler } from "./chat-hooks/use-select-file-handler"
-import { uploadAudioToSupabase } from "@/db/storage/voice-input" // Import the function
+import { uploadAudioToSupabase } from "@/db/storage/voice-input"
 
 interface ChatInputProps {}
 
@@ -30,6 +30,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null)
   const [isRecording, setIsRecording] = useState<boolean>(false)
+  const [transcriptReceived, setTranscriptReceived] = useState<boolean>(true) // Initially true since no recording/transcript is pending
 
   useHotkey("l", () => {
     handleFocusChatInput()
@@ -37,7 +38,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
   const [isTyping, setIsTyping] = useState<boolean>(false)
 
-  const [userInput, setUserInput] = useState<string>("") // Added this line to define userInput and its setter
+  const [userInput, setUserInput] = useState<string>("")
 
   const {
     isAssistantPickerOpen,
@@ -105,6 +106,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     if (mediaRecorder) {
       mediaRecorder.stop()
       setIsRecording(false)
+      setTranscriptReceived(false) // Assume transcript is not received when stopping
 
       let transcript = ""
 
@@ -119,9 +121,11 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           if (result) {
             transcript = result
             setUserInput(transcript) // Update the userInput state with the transcript
+            setTranscriptReceived(true) // Set true when transcript is processed
           }
         } catch (error) {
           console.error("Error uploading audio:", error)
+          setTranscriptReceived(true) // Ensure UI is unlocked even if there's an error
         }
       }
 
@@ -280,7 +284,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           <ChatCommandInput />
         </div>
 
-        <div className="absolute bottom-[12px] left-3 flex items-center space-x-2">
+        <div className="absolute bottom-[12px] left-3 flex items-center space-x-1">
           <IconCirclePlus
             className="cursor-pointer p-1 hover:opacity-50"
             size={32}
@@ -316,12 +320,13 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
         <TextareaAutosize
           textareaRef={chatInputRef}
-          className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-2 focus-visible:outline-none"
-          placeholder={t(
-            // `Ask anything. Type "@" for assistants, "/" for prompts, "#" for files, and "!" for tools.`
-            `Ask anything. Type @  /  #  !`
-          )}
-          onValueChange={isRecording ? () => {} : handleInputChange}
+          className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-4 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          placeholder={t(`Ask anything. Type @  /  #  !`)}
+          onValueChange={value => {
+            if (!isRecording && transcriptReceived) {
+              handleInputChange(value)
+            }
+          }}
           value={userInput}
           minRows={1}
           maxRows={18}
