@@ -120,7 +120,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           console.log("Transcript:", result)
           if (result) {
             transcript = result
-            setUserInput(transcript) // Update the userInput state with the transcript
+            setUserInput(userInput + " " + transcript) // Update the userInput state with the transcript
             setTranscriptReceived(true) // Set true when transcript is processed
           }
         } catch (error) {
@@ -323,9 +323,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-4 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           placeholder={t(`Ask anything. Type @  /  #  !`)}
           onValueChange={value => {
-            if (!isRecording && transcriptReceived) {
-              handleInputChange(value)
-            }
+            handleInputChange(value)
           }}
           value={userInput}
           minRows={1}
