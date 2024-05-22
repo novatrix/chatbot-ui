@@ -1,15 +1,4 @@
 import { supabase } from "@/lib/supabase/browser-client"
-import { AssemblyAI } from "assemblyai"
-
-const apiKey = process.env.ASSEMBLY_API_KEY || ""
-
-if (!apiKey) {
-  throw new Error("ASSEMBLY_API_KEY is not defined")
-}
-
-const client = new AssemblyAI({
-  apiKey: apiKey
-})
 
 export const uploadAudioToSupabase = async (
   audioBlob: Blob,
@@ -52,12 +41,22 @@ export const uploadAudioToSupabase = async (
       .from("voice_input")
       .getPublicUrl(fileName).data
 
-    // Transcribe the audio file using AssemblyAI
-    const transcript = await client.transcripts.transcribe({
-      audio: publicUrl
+    // Call the API route to transcribe the audio
+    const response = await fetch("/api/transcribe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ audioUrl: publicUrl })
     })
 
-    return transcript.text
+    if (!response.ok) {
+      throw new Error("Error transcribing audio")
+    }
+
+    const { text } = await response.json()
+
+    return text
   } catch (error) {
     console.error("Error uploading audio:", error)
     throw error

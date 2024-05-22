@@ -21,7 +21,6 @@ import { useChatHandler } from "./chat-hooks/use-chat-handler"
 import { useChatHistoryHandler } from "./chat-hooks/use-chat-history"
 import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
 import { useSelectFileHandler } from "./chat-hooks/use-select-file-handler"
-import { uploadAudioToSupabase } from "@/db/storage/voice-input"
 
 interface ChatInputProps {}
 
@@ -112,17 +111,31 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
         const fileName = `recording-${Date.now()}.wav`
 
         try {
-          const result = await uploadAudioToSupabase(audioBlob, fileName)
-          console.log("Transcript:", result)
-          if (result) {
-            transcript = result
-            handleInputChange(userInput + " " + transcript) // Update the userInput state with the transcript
+          const response = await fetch("/api/chat/assemblyai", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              chatSettings,
+              audioBlob,
+              fileName
+            })
+          })
+
+          if (!response.ok) {
+            throw new Error("Error transcribing audio")
+          }
+
+          const { text } = await response.json()
+          console.log("Transcript:", text)
+          if (text) {
+            handleInputChange(userInput + " " + text) // Update the userInput state with the transcript
           }
         } catch (error) {
           console.error("Error uploading audio:", error)
         }
       }
-
       return transcript
     }
     return ""
