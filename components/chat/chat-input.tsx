@@ -21,6 +21,7 @@ import { useChatHandler } from "./chat-hooks/use-chat-handler"
 import { useChatHistoryHandler } from "./chat-hooks/use-chat-history"
 import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
 import { useSelectFileHandler } from "./chat-hooks/use-select-file-handler"
+import { supabase } from "@/lib/supabase/browser-client"
 
 interface ChatInputProps {}
 
@@ -105,12 +106,32 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
       let transcript = ""
 
-      // This event might be triggered multiple times, handle accordingly
       mediaRecorder.ondataavailable = async event => {
         const audioBlob = event.data
         const fileName = `recording-${Date.now()}.wav`
 
         try {
+          // Upload the audio file to Supabase
+          const { data, error } = await supabase.storage
+            .from("voice_input")
+            .upload(fileName, audioBlob, {
+              contentType: "audio/wav"
+            })
+
+          if (error) {
+            throw new Error(`Error uploading audio: ${error.message}`)
+          }
+
+          // Get the public URL of the uploaded file
+          const { publicUrl } = supabase.storage
+            .from("voice_input")
+            .getPublicUrl(fileName).data
+
+          if (!publicUrl) {
+            throw new Error("Error getting public URL of the uploaded file")
+          }
+
+          // Send the public URL to the API endpoint
           const response = await fetch("/api/chat/assemblyai", {
             method: "POST",
             headers: {
@@ -118,13 +139,14 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
             },
             body: JSON.stringify({
               chatSettings,
-              audioBlob,
+              audioUrl: publicUrl,
               fileName
             })
           })
 
           if (!response.ok) {
-            throw new Error("Error transcribing audio")
+            const errorText = await response.text()
+            throw new Error(`Error transcribing audio: ${errorText}`)
           }
 
           const { text } = await response.json()
