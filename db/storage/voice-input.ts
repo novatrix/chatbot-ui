@@ -1,7 +1,11 @@
 import { supabase } from "@/lib/supabase/browser-client"
 import { AssemblyAI } from "assemblyai"
 
-const apiKey = "d84297939bd14281998ed8358be2f951"
+const apiKey = process.env.ASSEMBLY_API_KEY || ""
+
+if (!apiKey) {
+  throw new Error("ASSEMBLY_API_KEY is not defined")
+}
 
 const client = new AssemblyAI({
   apiKey: apiKey
