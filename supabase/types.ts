@@ -1103,6 +1103,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          assemblyai_api_key: string | null
           anthropic_api_key: string | null
           azure_openai_35_turbo_id: string | null
           azure_openai_45_turbo_id: string | null
@@ -1115,7 +1116,6 @@ export type Database = {
           display_name: string
           google_gemini_api_key: string | null
           groq_api_key: string | null
-          assemblyai_api_key: string | null
           has_onboarded: boolean
           id: string
           image_path: string
@@ -1132,6 +1132,7 @@ export type Database = {
           username: string
         }
         Insert: {
+          assemblyai_api_key?: string | null
           anthropic_api_key?: string | null
           azure_openai_35_turbo_id?: string | null
           azure_openai_45_turbo_id?: string | null
@@ -1144,7 +1145,6 @@ export type Database = {
           display_name: string
           google_gemini_api_key?: string | null
           groq_api_key?: string | null
-          assemblyai_api_key?: string | null
           has_onboarded?: boolean
           id?: string
           image_path: string
@@ -1161,6 +1161,7 @@ export type Database = {
           username: string
         }
         Update: {
+          assemblyai_api_key?: string | null
           anthropic_api_key?: string | null
           azure_openai_35_turbo_id?: string | null
           azure_openai_45_turbo_id?: string | null
@@ -1173,7 +1174,6 @@ export type Database = {
           display_name?: string
           google_gemini_api_key?: string | null
           groq_api_key?: string | null
-          assemblyai_api_key?: string | null
           has_onboarded?: boolean
           id?: string
           image_path?: string

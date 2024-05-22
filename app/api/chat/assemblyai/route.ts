@@ -58,16 +58,21 @@ export async function POST(request: Request) {
       .from("voice_input")
       .getPublicUrl(fileName).data
 
+    console.log("Public URL of the uploaded file:", publicUrl)
+
     // Transcribe the audio file using AssemblyAI
     const transcript = await client.transcripts.transcribe({
       audio: publicUrl
     })
+
+    console.log("Transcript received:", transcript)
 
     // Respond with the transcript text
     return new Response(JSON.stringify({ text: transcript.text }), {
       status: 200
     })
   } catch (error: any) {
+    console.error("Error during transcription process:", error)
     let errorMessage = error.message || "An unexpected error occurred"
     const errorCode = error.status || 500
 
