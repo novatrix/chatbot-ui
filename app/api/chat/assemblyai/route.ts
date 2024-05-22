@@ -26,6 +26,7 @@ export async function POST(request: Request) {
     // Transcribe the audio file using AssemblyAI
     const transcript = await client.transcripts.transcribe({
       audio: audioUrl
+      //speech_model: 'nano'
     })
 
     console.log("Transcript received:", transcript)
