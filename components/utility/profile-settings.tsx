@@ -103,6 +103,9 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
   const [anthropicAPIKey, setAnthropicAPIKey] = useState(
     profile?.anthropic_api_key || ""
   )
+  const [assemblyaiAPIKey, setAssemblyaiAPIKey] = useState(
+    profile?.assemblyai_api_key || ""
+  )
   const [googleGeminiAPIKey, setGoogleGeminiAPIKey] = useState(
     profile?.google_gemini_api_key || ""
   )
@@ -146,6 +149,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
       openai_api_key: openaiAPIKey,
       openai_organization_id: openaiOrgID,
       anthropic_api_key: anthropicAPIKey,
+      assemblyai_api_key: assemblyaiAPIKey,
       google_gemini_api_key: googleGeminiAPIKey,
       mistral_api_key: mistralAPIKey,
       groq_api_key: groqAPIKey,
@@ -172,7 +176,8 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
       "mistral",
       "groq",
       "perplexity",
-      "openrouter"
+      "openrouter",
+      "assemblyai"
     ]
 
     providers.forEach(async provider => {
@@ -639,6 +644,22 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                       type="password"
                       value={anthropicAPIKey}
                       onChange={e => setAnthropicAPIKey(e.target.value)}
+                    />
+                  </>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                {envKeyMap["assemblyai"] ? (
+                  <Label>AssemblyAI API key set by admin.</Label>
+                ) : (
+                  <>
+                    <Label>AssemblyAI API Key</Label>
+                    <Input
+                      placeholder="AssemblyAI API Key"
+                      type="password"
+                      value={assemblyaiAPIKey}
+                      onChange={e => setAssemblyaiAPIKey(e.target.value)}
                     />
                   </>
                 )}
