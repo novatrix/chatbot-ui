@@ -5,6 +5,7 @@ import { createChat } from "@/db/chats"
 import { createMessageFileItems } from "@/db/message-file-items"
 import { createMessages, updateMessage } from "@/db/messages"
 import { uploadMessageImage } from "@/db/storage/message-images"
+import { uploadMessageVideo } from "@/db/storage/message-videos"
 import {
   buildFinalMessages,
   buildGoogleGeminiFinalMessages
@@ -17,7 +18,8 @@ import {
   ChatPayload,
   ChatSettings,
   LLM,
-  MessageImage
+  MessageImage,
+  MessageVideo
 } from "@/types"
 import React from "react"
 import { toast } from "sonner"

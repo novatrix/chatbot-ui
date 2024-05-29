@@ -5,11 +5,13 @@ import { getAssistantToolsByAssistantId } from "@/db/assistant-tools"
 import { getChatFilesByChatId } from "@/db/chat-files"
 import { getChatById } from "@/db/chats"
 import { getMessageFileItemsByMessageId } from "@/db/message-file-items"
+import { getMessageVideoItemsByMessageId } from "@/db/message-video-items"
 import { getMessagesByChatId } from "@/db/messages"
 import { getMessageImageFromStorage } from "@/db/storage/message-images"
+import { getMessageVideoFromStorage } from "@/db/storage/message-videos"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import useHotkey from "@/lib/hooks/use-hotkey"
-import { LLMID, MessageImage } from "@/types"
+import { LLMID, MessageImage, MessageVideo } from "@/types"
 import { useParams } from "next/navigation"
 import { FC, useContext, useEffect, useState } from "react"
 import { ChatHelp } from "./chat-help"
@@ -35,6 +37,7 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
     assistants,
     setSelectedAssistant,
     setChatFileItems,
+    setChatVideoItems,
     setChatFiles,
     setShowFilesDisplay,
     setUseRetrieval,
@@ -77,18 +80,18 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
   }, [])
 
   const fetchMessages = async () => {
-    const fetchedMessages = await getMessagesByChatId(params.chatid as string)
+    const fetchedMessages = await getMessagesByChatId(params.chatid as string) // Fetch messages by chat ID
 
     const imagePromises: Promise<MessageImage>[] = fetchedMessages.flatMap(
       message =>
         message.image_paths
           ? message.image_paths.map(async imagePath => {
-              const url = await getMessageImageFromStorage(imagePath)
+              const url = await getMessageImageFromStorage(imagePath) // Get image URL from storage
 
               if (url) {
-                const response = await fetch(url)
-                const blob = await response.blob()
-                const base64 = await convertBlobToBase64(blob)
+                const response = await fetch(url) // Fetch the image
+                const blob = await response.blob() // Convert response to blob
+                const base64 = await convertBlobToBase64(blob) // Convert blob to base64
 
                 return {
                   messageId: message.id,
@@ -113,10 +116,45 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
     const images: MessageImage[] = await Promise.all(imagePromises.flat())
     setChatImages(images)
 
+    const videoPromises: Promise<MessageVideo[]>[] = fetchedMessages.flatMap(
+      async message => {
+        try {
+          const videoItems = await getMessageVideoItemsByMessageId(message.id)
+          return videoItems.videos.map(video => ({
+            id: video.id,
+            link: video.link,
+            image_url: video.imageUrl,
+            messageId: message.id,
+            file: null
+          }))
+        } catch (error) {
+          console.error(
+            `Error fetching video items for message ${message.id}:`,
+            error
+          )
+          return []
+        }
+      }
+    )
+
+    try {
+      const videos: MessageVideo[][] = await Promise.all(videoPromises)
+      const flattenedVideos: MessageVideo[] = videos.flat()
+      setChatVideoItems(
+        flattenedVideos.map(video => ({
+          id: video.id,
+          imageUrl: video.image_url,
+          link: video.link,
+          message_id: video.messageId
+        }))
+      )
+    } catch (error) {
+      console.error("Error processing video promises:", error)
+    }
+
     const messageFileItemPromises = fetchedMessages.map(
       async message => await getMessageFileItemsByMessageId(message.id)
     )
-
     const messageFileItems = await Promise.all(messageFileItemPromises)
 
     const uniqueFileItems = messageFileItems.flatMap(item => item.file_items)

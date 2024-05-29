@@ -5,6 +5,7 @@ import {
   ChatSettings,
   LLM,
   MessageImage,
+  MessageVideo,
   OpenRouterLLM,
   WorkspaceImage
 } from "@/types"
@@ -78,6 +79,8 @@ interface ChatbotUIContext {
   setSelectedChat: Dispatch<SetStateAction<Tables<"chats"> | null>>
   chatFileItems: Tables<"file_items">[]
   setChatFileItems: Dispatch<SetStateAction<Tables<"file_items">[]>>
+  chatVideoItems: Tables<"videos">[]
+  setChatVideoItems: Dispatch<SetStateAction<Tables<"videos">[]>>
 
   // ACTIVE CHAT STORE
   abortController: AbortController | null
@@ -118,10 +121,14 @@ interface ChatbotUIContext {
   setChatFiles: Dispatch<SetStateAction<ChatFile[]>>
   chatImages: MessageImage[]
   setChatImages: Dispatch<SetStateAction<MessageImage[]>>
+  videoFiles: MessageVideo[]
+  setVideoFiles: Dispatch<SetStateAction<MessageVideo[]>>
   newMessageFiles: ChatFile[]
   setNewMessageFiles: Dispatch<SetStateAction<ChatFile[]>>
   newMessageImages: MessageImage[]
   setNewMessageImages: Dispatch<SetStateAction<MessageImage[]>>
+  newMessageVideos: MessageVideo[]
+  setNewMessageVideos: Dispatch<SetStateAction<MessageVideo[]>>
   showFilesDisplay: boolean
   setShowFilesDisplay: Dispatch<SetStateAction<boolean>>
 
@@ -204,6 +211,8 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setChatSettings: () => {},
   chatFileItems: [],
   setChatFileItems: () => {},
+  chatVideoItems: [],
+  setChatVideoItems: () => {},
 
   // ACTIVE CHAT STORE
   isGenerating: false,
@@ -244,10 +253,14 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setChatFiles: () => {},
   chatImages: [],
   setChatImages: () => {},
+  videoFiles: [],
+  setVideoFiles: () => {},
   newMessageFiles: [],
   setNewMessageFiles: () => {},
   newMessageImages: [],
   setNewMessageImages: () => {},
+  newMessageVideos: [],
+  setNewMessageVideos: () => {},
   showFilesDisplay: false,
   setShowFilesDisplay: () => {},
 

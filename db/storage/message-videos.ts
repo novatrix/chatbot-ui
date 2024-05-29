@@ -20,10 +20,11 @@ export const uploadMessageVideo = async (path: string, video: File) => {
   return path
 }
 
+// Returns a signed URL for the video
 export const getMessageVideoFromStorage = async (filePath: string) => {
   const { data, error } = await supabase.storage
     .from("message_videos")
-    .createSignedUrl(filePath, 60 * 60 * 24) // 24hrs
+    .createSignedUrl(filePath, 60 * 60 * 24) // URL valid for 24hrs
 
   if (error) {
     throw new Error("Error downloading message video")
