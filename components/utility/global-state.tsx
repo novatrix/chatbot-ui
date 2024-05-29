@@ -115,13 +115,18 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [newMessageImages, setNewMessageImages] = useState<MessageImage[]>([])
   const [showFilesDisplay, setShowFilesDisplay] = useState<boolean>(false)
 
-  // RETIEVAL STORE
+  // RETRIEVAL STORE
   const [useRetrieval, setUseRetrieval] = useState<boolean>(true)
   const [sourceCount, setSourceCount] = useState<number>(4)
 
   // TOOL STORE
   const [selectedTools, setSelectedTools] = useState<Tables<"tools">[]>([])
   const [toolInUse, setToolInUse] = useState<string>("none")
+
+  // VIDEO STORE
+  const [chatVideoItems, setChatVideoItems] = useState<any[]>([])
+  const [videoFiles, setVideoFiles] = useState<any[]>([])
+  const [newMessageVideos, setNewMessageVideos] = useState<any[]>([])
 
   useEffect(() => {
     ;(async () => {
@@ -322,7 +327,15 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         selectedTools,
         setSelectedTools,
         toolInUse,
-        setToolInUse
+        setToolInUse,
+
+        // VIDEO STORE
+        chatVideoItems,
+        setChatVideoItems,
+        videoFiles,
+        setVideoFiles,
+        newMessageVideos,
+        setNewMessageVideos
       }}
     >
       {children}
