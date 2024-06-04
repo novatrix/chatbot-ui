@@ -4,6 +4,7 @@ import {
   ChatMessage,
   ChatSettings,
   LLM,
+  SearchEngineProvider,
   MessageImage,
   MessageVideo,
   OpenRouterLLM,
@@ -31,6 +32,8 @@ interface ChatbotUIContext {
   setFolders: Dispatch<SetStateAction<Tables<"folders">[]>>
   models: Tables<"models">[]
   setModels: Dispatch<SetStateAction<Tables<"models">[]>>
+  searchEngines: SearchEngineProvider[]
+  setSearchEngines: Dispatch<SetStateAction<SearchEngineProvider[]>>
   presets: Tables<"presets">[]
   setPresets: Dispatch<SetStateAction<Tables<"presets">[]>>
   prompts: Tables<"prompts">[]
@@ -49,6 +52,16 @@ interface ChatbotUIContext {
   setAvailableLocalModels: Dispatch<SetStateAction<LLM[]>>
   availableOpenRouterModels: OpenRouterLLM[]
   setAvailableOpenRouterModels: Dispatch<SetStateAction<OpenRouterLLM[]>>
+
+  // WEB SEARCH STORE
+  isUsingWebSearch: boolean
+  setIsUsingWebSearch: Dispatch<SetStateAction<boolean>>
+  envWebSearchKeyMap: Record<string, VALID_ENV_KEYS>
+  setEnvWebSearchKeyMap: Dispatch<
+    SetStateAction<Record<string, VALID_ENV_KEYS>>
+  >
+  availableSearchEngines: SearchEngineProvider[]
+  setAvailableSearchEngines: Dispatch<SetStateAction<SearchEngineProvider[]>>
 
   // WORKSPACE STORE
   selectedWorkspace: Tables<"workspaces"> | null
@@ -182,6 +195,14 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   availableOpenRouterModels: [],
   setAvailableOpenRouterModels: () => {},
 
+  // WEB SEARCH STORE
+  isUsingWebSearch: false,
+  setIsUsingWebSearch: () => {},
+  envWebSearchKeyMap: {},
+  setEnvWebSearchKeyMap: () => {},
+  availableSearchEngines: [],
+  setAvailableSearchEngines: () => {},
+
   // WORKSPACE STORE
   selectedWorkspace: null,
   setSelectedWorkspace: () => {},
@@ -203,24 +224,24 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   // PASSIVE CHAT STORE
   userInput: "",
   setUserInput: () => {},
-  selectedChat: null,
-  setSelectedChat: () => {},
   chatMessages: [],
   setChatMessages: () => {},
   chatSettings: null,
   setChatSettings: () => {},
+  selectedChat: null,
+  setSelectedChat: () => {},
   chatFileItems: [],
   setChatFileItems: () => {},
   chatVideoItems: [],
   setChatVideoItems: () => {},
 
   // ACTIVE CHAT STORE
-  isGenerating: false,
-  setIsGenerating: () => {},
-  firstTokenReceived: false,
-  setFirstTokenReceived: () => {},
   abortController: null,
   setAbortController: () => {},
+  firstTokenReceived: false,
+  setFirstTokenReceived: () => {},
+  isGenerating: false,
+  setIsGenerating: () => {},
 
   // CHAT INPUT COMMAND STORE
   isPromptPickerOpen: false,
@@ -274,5 +295,9 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   selectedTools: [],
   setSelectedTools: () => {},
   toolInUse: "none",
-  setToolInUse: () => {}
+  setToolInUse: () => {},
+
+  // Add missing properties
+  searchEngines: [],
+  setSearchEngines: () => {}
 })

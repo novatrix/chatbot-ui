@@ -36,6 +36,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+.vscode
 .VSCodeCounter
 tool-schemas
 custom-prompts
@@ -44,3 +45,5 @@ sw.js
 sw.js.map
 workbox-*.js
 workbox-*.js.map
+
+.idea

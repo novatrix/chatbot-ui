@@ -39,6 +39,7 @@ export async function getServerProfile() {
 
 function addApiKeysToProfile(profile: Tables<"profiles">) {
   const apiKeys = {
+    // LLMs
     [VALID_ENV_KEYS.OPENAI_API_KEY]: "openai_api_key",
     [VALID_ENV_KEYS.ANTHROPIC_API_KEY]: "anthropic_api_key",
     [VALID_ENV_KEYS.GOOGLE_GEMINI_API_KEY]: "google_gemini_api_key",
@@ -54,7 +55,12 @@ function addApiKeysToProfile(profile: Tables<"profiles">) {
     [VALID_ENV_KEYS.AZURE_GPT_35_TURBO_NAME]: "azure_openai_35_turbo_id",
     [VALID_ENV_KEYS.AZURE_GPT_45_VISION_NAME]: "azure_openai_45_vision_id",
     [VALID_ENV_KEYS.AZURE_GPT_45_TURBO_NAME]: "azure_openai_45_turbo_id",
-    [VALID_ENV_KEYS.AZURE_EMBEDDINGS_NAME]: "azure_openai_embeddings_id"
+    [VALID_ENV_KEYS.AZURE_EMBEDDINGS_NAME]: "azure_openai_embeddings_id",
+
+    // Search Engines
+    [VALID_ENV_KEYS.BRAVE_SEARCH_API_KEY]: "brave_search_api_key",
+    [VALID_ENV_KEYS.SERPER_API]: "serper_api",
+    [VALID_ENV_KEYS.GOOGLE_SEARCH_API_KEY]: "google_search_api_key"
   }
 
   for (const [envKey, profileKey] of Object.entries(apiKeys)) {

@@ -6,3 +6,6 @@ export type EnvKey =
   | "GROQ_API_KEY"
   | "PERPLEXITY_API_KEY"
   | "AZURE_OPENAI_API_KEY"
+  | "BRAVE_SEARCH_API_KEY"
+  | "SERPER_API"
+  | "GOOGLE_SEARCH_API_KEY"

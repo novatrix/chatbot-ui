@@ -5,6 +5,7 @@ import { VALID_ENV_KEYS } from "@/types/valid-keys"
 
 export async function GET() {
   const envKeyMap: Record<string, VALID_ENV_KEYS> = {
+    // LLMs
     azure: VALID_ENV_KEYS.AZURE_OPENAI_API_KEY,
     openai: VALID_ENV_KEYS.OPENAI_API_KEY,
     google: VALID_ENV_KEYS.GOOGLE_GEMINI_API_KEY,
@@ -20,7 +21,11 @@ export async function GET() {
     azure_gpt_35_turbo_name: VALID_ENV_KEYS.AZURE_GPT_35_TURBO_NAME,
     azure_gpt_45_vision_name: VALID_ENV_KEYS.AZURE_GPT_45_VISION_NAME,
     azure_gpt_45_turbo_name: VALID_ENV_KEYS.AZURE_GPT_45_TURBO_NAME,
-    azure_embeddings_name: VALID_ENV_KEYS.AZURE_EMBEDDINGS_NAME
+    azure_embeddings_name: VALID_ENV_KEYS.AZURE_EMBEDDINGS_NAME,
+    // search engines
+    brave_search_api_key: VALID_ENV_KEYS.BRAVE_SEARCH_API_KEY,
+    serper_api: VALID_ENV_KEYS.SERPER_API,
+    google_search_api_key: VALID_ENV_KEYS.GOOGLE_SEARCH_API_KEY
   }
 
   const isUsingEnvKeyMap = Object.keys(envKeyMap).reduce<
