@@ -144,7 +144,7 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
         flattenedVideos.map(video => ({
           id: video.id,
           imageUrl: video.image_url,
-          link: video.link,
+          link: video.link || "",
           message_id: video.messageId
         }))
       )

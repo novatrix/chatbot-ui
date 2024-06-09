@@ -1,4 +1,4 @@
-import { SearchResult } from "../../components/chat/search-answer/SearchResultComponent.jsx"
+import { SearchResult } from "../../components/chat/search-answer/search-result-component.jsx"
 import { config } from "../search-config.jsx"
 
 export async function braveSearch(

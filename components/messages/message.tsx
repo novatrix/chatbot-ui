@@ -14,7 +14,16 @@ import {
   IconPencil
 } from "@tabler/icons-react"
 import Image from "next/image"
-import { FC, useContext, useEffect, useRef, useState } from "react"
+import {
+  FC,
+  useContext,
+  useEffect,
+  useState,
+  FormEvent,
+  useRef,
+  useCallback,
+  use
+} from "react"
 import { ModelIcon } from "../models/model-icon"
 import { Button } from "../ui/button"
 import { FileIcon } from "../ui/file-icon"
@@ -23,6 +32,120 @@ import { TextareaAutosize } from "../ui/textarea-autosize"
 import { WithTooltip } from "../ui/with-tooltip"
 import { MessageActions } from "./message-actions"
 import { MessageMarkdown } from "./message-markdown"
+
+// search engine imports
+import { useActions, readStreamableValue } from "ai/rsc"
+import { type AI } from "@/app/actions"
+//import { ChatScrollAnchor } from '@/lib/hooks/chat-scroll-anchor';
+import Textarea from "react-textarea-autosize"
+//import { useEnterSubmit } from '@/lib/hooks/use-enter-submit';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip"
+import dynamic from "next/dynamic"
+// Main components
+import SearchResultsComponent from "@/components/chat/search-answer/search-result-component"
+//import UserMessageComponent from '@/components/chat/search-answer/UserMessageComponent';
+//import FollowUpComponent from '@/components/chat/search-answer/FollowUpComponent';
+//import InitialQueries from '@/components/chat/search-answer/InitialQueries';
+// Sidebar components
+//import LLMResponseComponent from '@/components/chat/search-answer/LLMResponseComponent';
+//import ImagesComponent from '@/components/chat/search-answer/ImagesComponent';
+//import VideosComponent from '@/components/chat/search-answer/VideosComponent';
+// Function calling components
+const MapComponent = dynamic(
+  () => import("@/components/chat/search-answer/map"),
+  { ssr: false }
+)
+import MapDetails from "@/components/chat/search-answer/map-details"
+import ShoppingComponent from "@/components/chat/search-answer/shopping-component"
+import FinancialChart from "@/components/chat/search-answer/financial-chart"
+import { ArrowUp } from "@phosphor-icons/react"
+// OPTIONAL: Use Upstash rate limiting to limit the number of requests per user
+import RateLimit from "@/components/chat/search-answer/rate-limit"
+
+// 2. Set up types
+interface SearchResult {
+  favicon: string
+  link: string
+  title: string
+}
+interface Message {
+  semanticCacheKey: any
+  cachedData: string
+  id: number
+  type: string
+  content: string
+  userMessage: string
+  images: Image[]
+  videos: Video[]
+  followUp: FollowUp | null
+  isStreaming: boolean
+  searchResults?: SearchResult[]
+  conditionalFunctionCallUI?: any
+  status?: string
+  places?: Place[]
+  shopping?: Shopping[]
+  ticker?: string | undefined
+}
+interface StreamMessage {
+  searchResults?: any
+  userMessage?: string
+  llmResponse?: string
+  llmResponseEnd?: boolean
+  images?: any
+  videos?: any
+  followUp?: any
+  conditionalFunctionCallUI?: any
+  status?: string
+  places?: Place[]
+  shopping?: Shopping[]
+  ticker?: string
+  cachedData?: string
+  semanticCacheKey?: any
+}
+interface Image {
+  link: string
+}
+interface Video {
+  link: string
+  imageUrl: string
+}
+interface Place {
+  cid: React.Key | null | undefined
+  latitude: number
+  longitude: number
+  title: string
+  address: string
+  rating: number
+  category: string
+  phoneNumber?: string
+  website?: string
+}
+interface FollowUp {
+  choices: {
+    message: {
+      content: string
+    }
+  }[]
+}
+interface Shopping {
+  type: string
+  title: string
+  source: string
+  link: string
+  price: string
+  shopping: any
+  position: number
+  delivery: string
+  imageUrl: string
+  rating: number
+  ratingCount: number
+  offers: string
+  productId: string
+}
 
 const ICON_SIZE = 32
 
