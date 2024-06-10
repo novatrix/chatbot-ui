@@ -54,14 +54,17 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     chatSettings,
     selectedTools,
     setSelectedTools,
-    assistantImages
+    assistantImages,
+    isWebSearchEnabled,
+    setIsWebSearchEnabled
   } = useContext(ChatbotUIContext)
 
   const {
     chatInputRef,
     handleSendMessage,
     handleStopMessage,
-    handleFocusChatInput
+    handleFocusChatInput,
+    handleWebSearchSendMessage
   } = useChatHandler()
 
   const { handleInputChange } = usePromptAndCommand()
@@ -268,8 +271,11 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
               )}
               onClick={() => {
                 if (!userInput) return
-
-                handleSendMessage(userInput, chatMessages, false)
+                if (isWebSearchEnabled) {
+                  handleWebSearchSendMessage(userInput, chatMessages, false)
+                } else {
+                  handleSendMessage(userInput, chatMessages, false)
+                }
               }}
               size={30}
             />

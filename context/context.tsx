@@ -55,13 +55,14 @@ interface ChatbotUIContext {
 
   // WEB SEARCH STORE
   isUsingWebSearch: boolean
-  setIsUsingWebSearch: Dispatch<SetStateAction<boolean>>
   envWebSearchKeyMap: Record<string, VALID_ENV_KEYS>
   setEnvWebSearchKeyMap: Dispatch<
     SetStateAction<Record<string, VALID_ENV_KEYS>>
   >
   availableSearchEngines: SearchEngineProvider[]
   setAvailableSearchEngines: Dispatch<SetStateAction<SearchEngineProvider[]>>
+  isWebSearchEnabled: boolean
+  setIsWebSearchEnabled: Dispatch<SetStateAction<boolean>>
 
   // WORKSPACE STORE
   selectedWorkspace: Tables<"workspaces"> | null
@@ -197,11 +198,12 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
 
   // WEB SEARCH STORE
   isUsingWebSearch: false,
-  setIsUsingWebSearch: () => {},
   envWebSearchKeyMap: {},
   setEnvWebSearchKeyMap: () => {},
   availableSearchEngines: [],
   setAvailableSearchEngines: () => {},
+  isWebSearchEnabled: false,
+  setIsWebSearchEnabled: () => {},
 
   // WORKSPACE STORE
   selectedWorkspace: null,

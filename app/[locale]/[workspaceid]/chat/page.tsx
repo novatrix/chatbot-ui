@@ -11,6 +11,7 @@ import { ChatbotUIContext } from "@/context/context"
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { useTheme } from "next-themes"
 import { useContext } from "react"
+import { Switch } from "@/components/ui/switch" // Assuming you have a Switch component
 
 export default function ChatPage() {
   useHotkey("o", () => handleNewChat())
@@ -18,7 +19,8 @@ export default function ChatPage() {
     handleFocusChatInput()
   })
 
-  const { chatMessages } = useContext(ChatbotUIContext)
+  const { chatMessages, isWebSearchEnabled, setIsWebSearchEnabled } =
+    useContext(ChatbotUIContext)
 
   const { handleNewChat, handleFocusChatInput } = useChatHandler()
 
@@ -43,6 +45,13 @@ export default function ChatPage() {
           <div className="flex grow flex-col items-center justify-center" />
 
           <div className="w-full min-w-[300px] items-end px-2 pb-3 pt-0 sm:w-[600px] sm:pb-8 sm:pt-5 md:w-[700px] lg:w-[700px] xl:w-[800px]">
+            <div className="flex items-center">
+              <Switch
+                checked={isWebSearchEnabled}
+                onChange={() => setIsWebSearchEnabled(!isWebSearchEnabled)}
+              />
+              <span className="ml-2">Search the web</span>
+            </div>
             <ChatInput />
           </div>
 

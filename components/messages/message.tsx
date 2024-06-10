@@ -52,8 +52,8 @@ import SearchResultsComponent from "@/components/chat/search-answer/search-resul
 //import InitialQueries from '@/components/chat/search-answer/InitialQueries';
 // Sidebar components
 //import LLMResponseComponent from '@/components/chat/search-answer/LLMResponseComponent';
-//import ImagesComponent from '@/components/chat/search-answer/ImagesComponent';
-//import VideosComponent from '@/components/chat/search-answer/VideosComponent';
+import ImagesComponent from "@/components/chat/search-answer/images-component"
+import VideosComponent from "@/components/chat/search-answer/videos-component"
 // Function calling components
 const MapComponent = dynamic(
   () => import("@/components/chat/search-answer/map"),
@@ -152,6 +152,10 @@ const ICON_SIZE = 32
 interface MessageProps {
   message: Tables<"messages">
   fileItems: Tables<"file_items">[]
+  searchResults: Tables<"search_results">[]
+  places: Tables<"places">[]
+  shopping: Tables<"shoppings">[]
+  videos: Tables<"videos">[]
   isEditing: boolean
   isLast: boolean
   onStartEdit: (message: Tables<"messages">) => void
@@ -162,6 +166,10 @@ interface MessageProps {
 export const Message: FC<MessageProps> = ({
   message,
   fileItems,
+  searchResults,
+  places,
+  shopping,
+  videos,
   isEditing,
   isLast,
   onStartEdit,
@@ -428,7 +436,79 @@ export const Message: FC<MessageProps> = ({
               maxRows={20}
             />
           ) : (
-            <MessageMarkdown content={message.content} />
+            <div>
+              <div className="w-full md:w-3/4 md:pr-2">
+                {message.ticker && message.ticker.length > 0 && (
+                  <FinancialChart
+                    key={`financialChart-${message.id}`}
+                    ticker={message.ticker}
+                  />
+                )}
+                {searchResults && searchResults.length > 0 && (
+                  <SearchResultsComponent
+                    key={`searchResults-${message.id}`}
+                    searchResults={searchResults}
+                  />
+                )}
+                {places && places.length > 0 && (
+                  <MapComponent
+                    key={`map-${message.id}`}
+                    places={places.map(place => ({
+                      ...place,
+                      cid: place.id,
+                      website: place.website ?? undefined
+                    }))}
+                  />
+                )}
+              </div>
+              <MessageMarkdown content={message.content} />
+              {/* Secondary content area */}
+              <div className="w-full md:w-1/4 md:pl-2">
+                {shopping && shopping.length > 0 && (
+                  <ShoppingComponent
+                    key={`shopping-${message.id}`}
+                    shopping={shopping.map(item => ({
+                      ...item,
+                      imageUrl: item.image_url ?? "",
+                      offers: item.offers ?? "",
+                      position: item.position ?? 0,
+                      rating: item.rating ?? 0,
+                      ratingCount: item.rating_count ?? 0,
+                      productId: item.product_id ?? "",
+                      price: item.price ?? "", // Provide a default value for price
+                      delivery: item.delivery ?? "" // Provide a default value for delivery
+                    }))}
+                  />
+                )}
+                {videos && (
+                  <VideosComponent
+                    key={`videos-${message.id}`}
+                    videos={videos.map(video => ({
+                      ...video,
+                      imageUrl: video.imageUrl ?? ""
+                    }))}
+                  />
+                )}
+                {message.image_paths && (
+                  <ImagesComponent
+                    key={`images-${message.id}`}
+                    images={message.image_paths.map(image => ({
+                      link: image
+                    }))}
+                  />
+                )}
+                {places && places.length > 0 && (
+                  <MapDetails
+                    key={`map-${message.id}`}
+                    places={places.map(place => ({
+                      ...place,
+                      cid: place.id,
+                      website: place.website ?? undefined
+                    }))}
+                  />
+                )}
+              </div>
+            </div>
           )}
         </div>
 

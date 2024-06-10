@@ -7,7 +7,7 @@ import { OllamaEmbeddings } from "@langchain/community/embeddings/ollama"
 import { functionCalling } from "./function-calling"
 import { OpenAI } from "openai"
 
-import cheerio from "cheerio"
+import { load } from "cheerio"
 import { config } from "./search-config"
 // OPTIONAL: Use Upstash rate limiting to limit the number of requests per user
 import { Ratelimit } from "@upstash/ratelimit"
@@ -139,7 +139,7 @@ export async function get10BlueLinksContents(
   }
   function extractMainContent(html: string): string {
     try {
-      const $ = cheerio.load(html)
+      const $ = load(html)
       $("script, style, head, nav, footer, iframe, img").remove()
       return $("body").text().replace(/\s+/g, " ").trim()
     } catch (error) {
