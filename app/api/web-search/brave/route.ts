@@ -1,6 +1,5 @@
 import { SearchResult } from "@/components/chat/search-answer/search-result-component.jsx"
 import { config } from "@/app/search-config.jsx"
-import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
 import { ServerRuntime } from "next"
 
 export const runtime: ServerRuntime = "edge"

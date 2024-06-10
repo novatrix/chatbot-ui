@@ -4,10 +4,6 @@
 // - IMPORTANT: when Ollama Embeddings + Ollama inference enabled at the same time, this can cause time-to-first-token to be quite long
 // - IMPORTANT: Follow-up questions are not yet implrmented with Ollama models, only OpenAI compatible models that use  {type: "json_object"}
 
-import { FastForwardCircle } from "@phosphor-icons/react/dist/ssr"
-import { flushAllTraces } from "next/dist/trace"
-import { use } from "react"
-
 export const config = {
   useOllamaInference: false,
   useOllamaEmbeddings: false,
