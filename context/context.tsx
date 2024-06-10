@@ -55,6 +55,7 @@ interface ChatbotUIContext {
 
   // WEB SEARCH STORE
   isUsingWebSearch: boolean
+  setIsUsingWebSearch: Dispatch<SetStateAction<boolean>>
   envWebSearchKeyMap: Record<string, VALID_ENV_KEYS>
   setEnvWebSearchKeyMap: Dispatch<
     SetStateAction<Record<string, VALID_ENV_KEYS>>
@@ -153,8 +154,8 @@ interface ChatbotUIContext {
   setSourceCount: Dispatch<SetStateAction<number>>
 
   // TOOL STORE
-  selectedTools: Tables<"tools">[]
-  setSelectedTools: Dispatch<SetStateAction<Tables<"tools">[]>>
+  selectedTools: any[]
+  setSelectedTools: Dispatch<SetStateAction<any[]>>
   toolInUse: string
   setToolInUse: Dispatch<SetStateAction<string>>
 }
@@ -198,6 +199,7 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
 
   // WEB SEARCH STORE
   isUsingWebSearch: false,
+  setIsUsingWebSearch: () => {},
   envWebSearchKeyMap: {},
   setEnvWebSearchKeyMap: () => {},
   availableSearchEngines: [],

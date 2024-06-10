@@ -128,6 +128,19 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [videoFiles, setVideoFiles] = useState<any[]>([])
   const [newMessageVideos, setNewMessageVideos] = useState<any[]>([])
 
+  // SEARCH ENGINES STORE
+  const [searchEngines, setSearchEngines] = useState<any[]>([])
+  const [isUsingWebSearch, setIsUsingWebSearch] = useState<boolean>(false)
+  const [envWebSearchKeyMap, setEnvWebSearchKeyMap] = useState<
+    Record<string, VALID_ENV_KEYS>
+  >({})
+
+  // Added properties to resolve error
+  const [availableSearchEngines, setAvailableSearchEngines] = useState<any[]>(
+    []
+  )
+  const [isWebSearchEnabled, setIsWebSearchEnabled] = useState<boolean>(false)
+
   useEffect(() => {
     ;(async () => {
       const profile = await fetchStartingData()
@@ -335,7 +348,21 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         videoFiles,
         setVideoFiles,
         newMessageVideos,
-        setNewMessageVideos
+        setNewMessageVideos,
+
+        // SEARCH ENGINES STORE
+        searchEngines,
+        setSearchEngines,
+        isUsingWebSearch,
+        setIsUsingWebSearch,
+        envWebSearchKeyMap,
+        setEnvWebSearchKeyMap,
+
+        // Added properties to resolve error
+        availableSearchEngines,
+        setAvailableSearchEngines,
+        isWebSearchEnabled,
+        setIsWebSearchEnabled
       }}
     >
       {children}
